@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".weeklyroutine"></activity>
+        <activity android:name=".weeklyroutine" />
+        <activity android:name=".cal_amount"></activity>
     </application>
 
 </manifest>
