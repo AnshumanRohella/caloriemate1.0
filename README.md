@@ -2,7 +2,7 @@
 
 CalorieMate is a calorie calculating app for Android. 
 
-## How to use Bats! HIIT
+## How to use CalorieMate
 
 ### Your Height,Weight and Age
 
