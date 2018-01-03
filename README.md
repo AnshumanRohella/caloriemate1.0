@@ -11,7 +11,7 @@ The app calculates your BMI using your weight, height and age.
 ### Your Weekly Routine
 
 By getting the your weekly lifestyle, the app calculates the calorie requirements based on your needs. ( Gain weight, Lose weight, Maintain ).
-### Audio and visual cues
+
 
 ## License
 
