@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class cal_amount extends Activity {
     Intent curr;
     TextView maintain;
@@ -15,6 +17,7 @@ public class cal_amount extends Activity {
     float weight;
     float height;
     float age;
+    String system;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,8 @@ public class cal_amount extends Activity {
         weight = curr.getFloatExtra("weight",0);
         age = curr.getFloatExtra("age",0);
         height =curr.getFloatExtra("height",0);
+        system =  curr.getStringExtra("system");
+
 
 
         calc_requirement(curr.getStringExtra("activity"),curr.getStringExtra("gender"));
@@ -39,14 +44,21 @@ public class cal_amount extends Activity {
 
 
     private void calc_requirement(String activity,String gender){
+        DecimalFormat df = new DecimalFormat("###.##");
         double cal_req= 0;
         double BMR =0 ;
-        if(gender.compareTo("Male") == 0)
-        {
-            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age );
+        if(system.equalsIgnoreCase("Metric")) {
+            if (gender.compareTo("Male") == 0) {
+                BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else
+                BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
         }else
-            BMR =  447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
-
+        {
+            if (gender.compareTo("Male") == 0) {
+                BMR = 88.362 + (13.397 * (weight*0.453592)) + (4.799 * (height*2.54)) - (5.677 * age);
+            } else
+                BMR = 447.593 + (9.247 * (weight*0.453592)) + (3.098 * (height*2.54)) - (4.330 * age);
+        }
         switch (activity){
             case "Sedentary- Little or no exercise.":{
                 cal_req = BMR * 1.2;
@@ -70,10 +82,10 @@ public class cal_amount extends Activity {
                 break;
             }
         }
-        maintain.setText("To maintain your weight :"+(cal_req)+" Kcal/day");
-        loseless.setText("To lose 0.5 kgs per week : "+(cal_req-500)+" Kcal/day");
-        losemore.setText("To lose 1 Kgs per week : "+(cal_req-1000)+" Kcal/day");
-        gainless.setText("To gain 0.5 Kgs per week : "+(cal_req+500)+" Kcal/day");
-        gainmore.setText("To gain 1.0 Kgs per week : "+(cal_req+1000)+" Kcal/day");
+        maintain.setText("To maintain your weight :"+(int)Math.round(cal_req)+" Kcal/day");
+        loseless.setText("To lose 0.5 kgs per week : "+(int)Math.round(cal_req-500)+" Kcal/day");
+        losemore.setText("To lose 1 Kgs per week : "+(int)(Math.round(cal_req-1000))+" Kcal/day");
+        gainless.setText("To gain 0.5 Kgs per week : "+(int)(Math.round(cal_req+500))+" Kcal/day");
+        gainmore.setText("To gain 1.0 Kgs per week : "+(int)(Math.round(cal_req+1000))+" Kcal/day");
     }
 }

@@ -3,6 +3,7 @@ package com.myapp.caloriemate;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,33 +16,39 @@ public class MainActivity extends Activity {
 
     EditText weight;
     EditText age;
-    EditText  height;
-    String system;
-    String gender;
+    EditText height_metric;
+    EditText height_inches;
+    EditText  height_feet;
     Button next;
     Switch system_select ;
     RadioButton male;
     RadioButton female;
-    String weight_val;
-    String age_val;
-    String height_val;
+    String system = "Metric";
+    String gender= "Male";
+    String weight_val="";
+    String age_val= "";
+    String height_val_cm= "";
+    String height_val_feet= "";
+    String height_val_inches = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        height_inches =  (EditText) findViewById(R.id.height_input_inches);
+        height_feet =  (EditText) findViewById(R.id.height_input_feet);
+        height_metric = (EditText) findViewById(R.id.height_input);
         weight = (EditText) findViewById(R.id.weight_input);
         age  = (EditText) findViewById(R.id.age_input);
-        height = (EditText) findViewById(R.id.height_input);
         next = (Button) findViewById(R.id.next_button);
         system_select = (Switch) findViewById(R.id.switch1);
         male = (RadioButton) findViewById(R.id.radioButton);
         female= (RadioButton) findViewById(R.id.radioButton2);
-        gender = "";
-        system = "Metric";
-        weight_val = "";
-        age_val = "";
-        height_val= "";
+        male.toggle();
+
+
+        height_inches.setVisibility(View.INVISIBLE);
+        height_feet.setVisibility(View.INVISIBLE);
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,28 +67,67 @@ public class MainActivity extends Activity {
                 }
                 else
                     age_val =  age.getText().toString();
-                if(height.getText().toString().compareTo("") == 0)
-                {
-                    Toast.makeText(getApplicationContext(),"Please enter height",Toast.LENGTH_SHORT).show();
+
+                if(system.equalsIgnoreCase("Imperial")){
+
+                    if (height_feet.getText().toString().compareTo("") == 0 || height_inches.getText().toString().compareTo("")==0) {
+                        Toast.makeText(getApplicationContext(), "Please enter height", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else
+                    {
+                        height_val_inches =  height_inches.getText().toString();
+                        height_val_feet =  height_feet.getText().toString();
+
+                    }
+                }else if(system.equalsIgnoreCase("Metric")){
+
+                    if (height_metric.getText().toString().compareTo("") == 0) {
+                        Toast.makeText(getApplicationContext(), "Please enter height", Toast.LENGTH_SHORT).show();
+                        return;
+                    }else
+                    {
+                        height_val_cm =  height_metric.getText().toString();
+                    }
 
                 }
-                else
-                    height_val =  height.getText().toString();
+
 
                 start_weekly_routine();
 
             }
         });
+
+
         system_select.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                if(findViewById(R.id.switch1).isActivated())
+
+                Log.d("Switch Text", system_select.getText().toString());
+                if(system_select.isChecked())
                 {
                     system =  "Imperial";
+                    findViewById(R.id.height_input).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.height_input_inches).setVisibility(View.VISIBLE);
+                    findViewById(R.id.height_input_feet).setVisibility(View.VISIBLE);
+                    weight.setHint("Enter Weight (lbs) ");
+                    height_inches.setHint("(inches)");
+                    height_feet.setHint("Height (ft)");
+
                 }
-                else
+                else {
                     system = "Metric";
+                    findViewById(R.id.height_input).setVisibility(View.VISIBLE);
+                    findViewById(R.id.height_input_inches).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.height_input_feet).setVisibility(View.INVISIBLE);
+                    weight.setHint("Enter Weight (kgs)");
+                    height_metric.setHint("Enter Height (cms)");
+                }
+
             }
+
+
         });
         male.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +148,21 @@ public class MainActivity extends Activity {
     private void start_weekly_routine(){
         Intent i =  new Intent(this,weeklyroutine.class);
 
+        if(system.equalsIgnoreCase("Imperial")){
+
+            i.putExtra("height_inches",height_inches.getText());
+            i.putExtra("height_feet",height_feet.getText());
+        }
+
         i.putExtra("System",system);
         i.putExtra("age",age_val);
-        i.putExtra("height",height_val);
+        i.putExtra("height_metric", height_val_cm);
+        i.putExtra("height_feet",height_val_feet);
+        i.putExtra("height_inches",height_val_inches);
         i.putExtra("weight",weight_val);
         i.putExtra("gender",gender);
-        startActivity(i);
-
+        try {
+            startActivity(i);
+        }catch(Exception e){System.exit(0);}
     }
 }

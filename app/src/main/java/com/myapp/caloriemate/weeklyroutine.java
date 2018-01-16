@@ -14,10 +14,13 @@ import java.text.DecimalFormat;
 
 public class weeklyroutine extends Activity {
     Intent i;
-    private static float weight;
-    private static float height;
-    private static float age;
-    private static String activity;
+    private float weight;
+    private float height;
+    private float height_inches ;
+    private float height_feet;
+    private float age;
+    private String activity;
+    private String system;
 
     TextView bmi_val;
     TextView bmi_desc;
@@ -29,34 +32,54 @@ public class weeklyroutine extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weeklyroutine);
 
+try {
+    cal_calc = (Button) findViewById(R.id.calc_calories);
+    activity_group = (RadioGroup) findViewById(R.id.radioGroup);
+    i = getIntent();
+    weight = Float.parseFloat(i.getStringExtra("weight"));
 
-        cal_calc = (Button) findViewById(R.id.calc_calories);
-        activity_group = (RadioGroup) findViewById(R.id.radioGroup);
-        i = getIntent();
-        weight = Float.parseFloat(i.getStringExtra("weight"));
-        height = Float.parseFloat(i.getStringExtra("height"));
-        age = Float.parseFloat(i.getStringExtra("age"));
+    age = Float.parseFloat(i.getStringExtra("age"));
+    system =  String.valueOf(i.getStringExtra("System"));
 
-        bmi_val = (TextView) findViewById(R.id.bmi_val);
-        bmi_desc = (TextView) findViewById(R.id.bmi_desc);
-        bmi_val.setText(String.valueOf(calcBMI(weight, (height / 100))));
-        cal_calc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RadioButton temp;
-                temp = (RadioButton) findViewById(activity_group.getCheckedRadioButtonId());
-                activity = String.valueOf(temp.getText());
-                caluclate_calories();
-            }
-        });
-
+    if(system.equalsIgnoreCase("Imperial")){
+        height_inches = Float.parseFloat(i.getStringExtra("height_inches"));
+        height_feet =  Float.parseFloat(i.getStringExtra("height_feet"));
+        height =  height_feet*12 + height_inches;
+    }else
+    {
+        height = Float.parseFloat(i.getStringExtra("height_metric"));
     }
+
+    bmi_val = (TextView) findViewById(R.id.bmi_val);
+    bmi_desc = (TextView) findViewById(R.id.bmi_desc);
+
+    if(system.equalsIgnoreCase("Metric"))
+        bmi_val.setText(String.valueOf(calcBMI(weight, (height / 100))));
+    else
+        bmi_val.setText(String.valueOf(calcBMI(weight, (height))));
+
+    cal_calc.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            RadioButton temp;
+            temp = (RadioButton) findViewById(activity_group.getCheckedRadioButtonId());
+            activity = String.valueOf(temp.getText());
+            caluclate_calories();
+        }
+    });
+}catch (Exception e){e.printStackTrace();}
+    }
+
+
     private float calcBMI(float weight,float height){
         float retval;
         DecimalFormat df = new DecimalFormat("###.##");
 
+        if(system.equalsIgnoreCase("Metric"))
+            retval = Float.parseFloat(df.format((weight / (Math.pow(height,2)))));
+        else
+            retval = Float.parseFloat(df.format(703.0*(weight / (Math.pow(height,2)))));
 
-        retval = Float.parseFloat(df.format((weight / (Math.pow(height,2)))));
         if(retval < 15.0)
         {  bmi_desc.setText("Very severely underweight");
             bmi_desc.setTextColor(Color.RED);
@@ -91,17 +114,17 @@ public class weeklyroutine extends Activity {
             bmi_desc.setTextColor(Color.RED);
         }
 
-
         return retval;
 
-
     }
+
     private void caluclate_calories(){
 
         intent  = new Intent(this,cal_amount.class);
         intent.putExtra("age",age);
         intent.putExtra("weight",weight);
         intent.putExtra("height",height);
+        intent.putExtra("system",system);
         intent.putExtra("activity",activity);
         intent.putExtra("gender",i.getStringExtra("gender"));
         startActivity(intent);
