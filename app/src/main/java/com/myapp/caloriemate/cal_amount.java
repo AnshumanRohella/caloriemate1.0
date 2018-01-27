@@ -20,21 +20,22 @@ public class cal_amount extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cal_amount);
-        curr = getIntent();
+        try {
+            curr = getIntent();
 
-        maintain = (TextView) findViewById(R.id.maintain_text);
-        loseless = (TextView) findViewById(R.id.lose0_5_text);
-        losemore = (TextView) findViewById(R.id.lose1_text);
-        gainless = (TextView) findViewById(R.id.gain0_5_text);
-        gainmore = (TextView) findViewById(R.id.gain1_text);
+            maintain = (TextView) findViewById(R.id.maintain_text);
+            loseless = (TextView) findViewById(R.id.lose0_5_text);
+            losemore = (TextView) findViewById(R.id.lose1_text);
+            gainless = (TextView) findViewById(R.id.gain0_5_text);
+            gainmore = (TextView) findViewById(R.id.gain1_text);
 
-        weight = curr.getFloatExtra("weight",0);
-        age = curr.getFloatExtra("age",0);
-        height =curr.getFloatExtra("height",0);
+            weight = curr.getFloatExtra("weight", 0);
+            age = curr.getFloatExtra("age", 0);
+            height = curr.getFloatExtra("height", 0);
 
 
-        calc_requirement(curr.getStringExtra("activity"),curr.getStringExtra("gender"));
-
+            calc_requirement(curr.getStringExtra("activity"), curr.getStringExtra("gender"));
+        }catch (Exception e){e.printStackTrace();}
     }
 
 

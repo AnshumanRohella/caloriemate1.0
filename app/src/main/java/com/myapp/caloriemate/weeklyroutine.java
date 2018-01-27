@@ -29,17 +29,18 @@ public class weeklyroutine extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weeklyroutine);
 
+        try {
+            cal_calc = (Button) findViewById(R.id.calc_calories);
+            activity_group = (RadioGroup) findViewById(R.id.radioGroup);
+            i = getIntent();
+            weight = Float.parseFloat(i.getStringExtra("weight"));
+            height = Float.parseFloat(i.getStringExtra("height"));
+            age = Float.parseFloat(i.getStringExtra("age"));
 
-        cal_calc = (Button) findViewById(R.id.calc_calories);
-        activity_group = (RadioGroup) findViewById(R.id.radioGroup);
-        i = getIntent();
-        weight = Float.parseFloat(i.getStringExtra("weight"));
-        height = Float.parseFloat(i.getStringExtra("height"));
-        age = Float.parseFloat(i.getStringExtra("age"));
-
-        bmi_val = (TextView) findViewById(R.id.bmi_val);
-        bmi_desc = (TextView) findViewById(R.id.bmi_desc);
-        bmi_val.setText(String.valueOf(calcBMI(weight, (height / 100))));
+            bmi_val = (TextView) findViewById(R.id.bmi_val);
+            bmi_desc = (TextView) findViewById(R.id.bmi_desc);
+            bmi_val.setText(String.valueOf(calcBMI(weight, (height / 100))));
+        }catch (Exception e){e.printStackTrace();}
         cal_calc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
